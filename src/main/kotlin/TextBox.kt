@@ -14,11 +14,19 @@ data class TextBox(val t: Tree) {
 
     val height: Int = maxChildrenHeight + 1
 
+    val headerStartIndex = leftWidth
+    val headerEndIndex = leftWidth + t.data.toString().length
+
     val text: List<String> =
         if (t.isLeaf)
             listOf(t.data.toString())
         else {
-            val header = " ".repeat(leftWidth) + t.data.toString() + " ".repeat(rightWidth)
+            val headerLeft =
+                if (left != null) " ".repeat(left.headerEndIndex - 1) + "┌" + "─".repeat(leftWidth - left.headerEndIndex) else ""
+            val headerRight =
+                if (right != null) "─".repeat(right.headerStartIndex ) + "┐" + " ".repeat(rightWidth - right.headerStartIndex - 1) else ""
+
+            val header = headerLeft + t.data.toString() + headerRight
             val rest =
                 List(maxChildrenHeight) { index: Int ->
                     (left?.text?.getOrNull(index) ?: " ".repeat(leftWidth)) +
